@@ -1,0 +1,4 @@
+exports/
+node_modules/
+.DS_Store
+config.js
