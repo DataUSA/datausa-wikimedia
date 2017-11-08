@@ -2,9 +2,9 @@
   "name": "datausa-wikimedia",
   "version": "1.0.0",
   "description": "Visualization scraper/formatter for uploading to Wikimedia Commons",
-  "main": "index.js",
+  "main": "scrape.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "scrape": "node scrape.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/DataUSA/datausa-wikimedia/issues"
   },
-  "homepage": "https://github.com/DataUSA/datausa-wikimedia#readme"
+  "homepage": "https://github.com/DataUSA/datausa-wikimedia#readme",
+  "dependencies": {
+    "nightmare": "^2.10.0"
+  }
 }
