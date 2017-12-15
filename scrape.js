@@ -45,9 +45,14 @@ config.urls.forEach(url => {
 
         sources = build.sources;
 
-        build.viz.font("sans-serif").draw(() => {
-          setTimeout(finishScrape, 1000);
-        });
+        if (build.viz.font) {
+          build.viz.font("sans-serif").draw(() => {
+            setTimeout(finishScrape, 1000);
+          });
+        }
+        else {
+          finishScrape();
+        }
 
       }
       else {
@@ -181,7 +186,10 @@ config.urls.forEach(url => {
 
 ${data.viz}`;
 
+      delete data.viz;
+
       fs.writeFileSync(`${dir}/${data.filename}.svg`, contents);
+      fs.writeFileSync(`${dir}/${data.filename}.js`, `module.exports = ${JSON.stringify(data)}`);
 
       const today = new Date();
       let dd = today.getDate();
