@@ -4,7 +4,8 @@
   "description": "Visualization scraper/formatter for uploading to Wikimedia Commons",
   "main": "scrape.js",
   "scripts": {
-    "scrape": "node scrape.js"
+    "scrape": "node scrape.js",
+    "upload": "node upload.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,7 @@
   },
   "homepage": "https://github.com/DataUSA/datausa-wikimedia#readme",
   "dependencies": {
-    "nightmare": "^2.10.0"
+    "nightmare": "^2.10.0",
+    "nodemw": "^0.12.0"
   }
 }
