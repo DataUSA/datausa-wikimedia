@@ -5,12 +5,11 @@ const Nightmare = require("nightmare"),
       fs = require("fs");
 
 const dir = "./exports";
-
 if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
-config.urls.forEach(url => {
+function scrape(url) {
 
-  const fullUrl = `https://datausa.io/${url}`;
+  const fullUrl = `https://xenops.datausa.io/${url}`;
 
   let filename = url.replace(/\//g, "-");
   const profile = filename.includes("profile");
@@ -19,7 +18,7 @@ config.urls.forEach(url => {
     filename = filename.replace("?level=", "").replace("&key=", "-");
   }
 
-  new Nightmare({show: false})
+  return new Nightmare({show: false})
     .viewport(profile ? 1400 : 1100, 650)
     .goto(fullUrl)
     .wait(5000)
@@ -47,7 +46,10 @@ config.urls.forEach(url => {
 
         if (build.viz.font) {
           build.viz.font("sans-serif").draw(() => {
-            setTimeout(finishScrape, 1000);
+            setTimeout(() => {
+              build.viz.draw();
+              setTimeout(finishScrape, 1000);
+            }, 1000);
           });
         }
         else {
@@ -111,6 +113,12 @@ config.urls.forEach(url => {
         viz.select("g.tiles").remove();
         viz.select("g.pins").remove();
         viz.select("g.brush").remove();
+
+        const drawer = d3.select(viz.node().parentNode).select("#d3plus_drawer");
+        if (drawer.size()) {
+          heightMod += drawer.node().clientHeight;
+          drawer.remove();
+        }
 
         // viz specific
         const key = viz.select("g#key");
@@ -179,7 +187,10 @@ config.urls.forEach(url => {
     }, profile, filename, fullUrl)
     .end()
     .then(data => {
-      console.log(data.title);
+
+      process.stdout.clearLine();
+      process.stdout.cursorTo(0);
+      process.stdout.write(data.title);
 
       const contents = `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -218,4 +229,14 @@ ${data.sources.map((d, i) => `${i ? "\n" : ""}*Data Source: [${d.link} ${d.org} 
       fs.writeFileSync(`${dir}/${data.filename}.txt`, meta);
     });
 
-});
+}
+
+function scrapeNext(index) {
+  process.stdout.write(`\nScraping ${index + 1} of ${config.urls.length}`);
+  scrape(config.urls[index])
+    .then(() => {
+      if (index < config.urls.length - 1) scrapeNext(index + 1);
+      else console.log("\n");
+    });
+}
+scrapeNext(0);
