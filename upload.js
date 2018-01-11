@@ -20,8 +20,8 @@ function upload(files) {
       if (err) throw err;
       client.getArticle(`File:${title}.svg`, err => {
         if (err) throw err;
-        client.upload(title, svg, "Uploading SVG", () => {
-          client.edit(`File:${title}.svg`, txt, "Adding a file description", () => {
+        client.upload(title, svg, "updates SVG", () => {
+          client.edit(`File:${title}.svg`, txt, "updates description", () => {
             console.log(`uploaded: ${title}`);
             if (files.length) upload(files);
             else console.log("done!");
