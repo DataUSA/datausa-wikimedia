@@ -12,11 +12,8 @@ function scrape(url) {
   const fullUrl = `https://xenops.datausa.io/${url}`;
 
   let filename = url.replace(/\//g, "-");
+  filename = filename.replace("?level=", "").replace("&key=", "-");
   const profile = filename.includes("profile");
-  if (profile) filename = filename.slice(0, -1);
-  else {
-    filename = filename.replace("?level=", "").replace("&key=", "-");
-  }
 
   return new Nightmare({show: false})
     .viewport(profile ? 1400 : 1100, 650)
@@ -24,12 +21,12 @@ function scrape(url) {
     .wait(5000)
     .evaluate((profile, filename, url, done) => {
 
-      let description = "", heightMod = 0, sources = [], title;
+      let build, description = "", heightMod = 0, sources = [], title;
 
       const viz = d3.select("svg");
 
       if (profile) {
-        const build = window.current_build;
+        build = window.current_build;
 
         title = build.title.substring(11).replace(/\n/g, "").replace(/\s{2,}/g, " ");
         title += ` (${d3.max(d3.merge(build.data.map(d => d.data)), d => d.year)})`;
@@ -81,6 +78,9 @@ function scrape(url) {
 
         if (elem.attr("font-family")) elem.attr("font-family", "sans-serif");
         if (elem.attr("vector-effect")) elem.attr("vector-effect", null);
+        if (elem.attr("opacity")) elem.attr("opacity", 1);
+        if (elem.attr("fill-opacity")) elem.attr("fill-opacity", 1);
+        if (elem.attr("stroke-opacity")) elem.attr("stroke-opacity", 1);
         const transform = elem.style("text-transform");
         if (transform) {
           if (transform === "uppercase") elem.text(elem.text().toUpperCase());
@@ -94,6 +94,10 @@ function scrape(url) {
 
       function finishScrape() {
 
+        if (build && ["bar", "scatter", "line", "stacked"].includes(build.config.type)) {
+          d3.select("g#app").attr("transform", "translate(5, 0)");
+          d3.select("g#data").attr("transform", "translate(5, 0)");
+        }
 
         // map specific
         const scale = viz.select("g.scale");
@@ -113,6 +117,8 @@ function scrape(url) {
         viz.select("g.tiles").remove();
         viz.select("g.pins").remove();
         viz.select("g.brush").remove();
+        viz.select("rect#d3plus_graph_background").remove();
+        viz.select("path#d3plus_graph_mirror").remove();
 
         const drawer = d3.select(viz.node().parentNode).select("#d3plus_drawer");
         if (drawer.size()) {
