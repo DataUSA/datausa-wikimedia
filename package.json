@@ -4,6 +4,7 @@
   "description": "Visualization scraper/formatter for uploading to Wikimedia Commons",
   "main": "scrape.js",
   "scripts": {
+    "populate": "node config.populate.js",
     "scrape": "node scrape.js",
     "upload": "node upload.js"
   },
@@ -18,6 +19,8 @@
   },
   "homepage": "https://github.com/DataUSA/datausa-wikimedia#readme",
   "dependencies": {
+    "axios": "^0.17.1",
+    "d3-array": "^1.2.1",
     "nightmare": "^2.10.0",
     "nodemw": "^0.12.0"
   }
