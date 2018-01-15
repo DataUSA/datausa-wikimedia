@@ -1,5 +1,7 @@
 # datausa-wikimedia
 
+Must install the Google Font "Noto Sans" before proceeding.
+
 Local configuration needs to be stored in `config.js` file with the following structure:
 
 ```js

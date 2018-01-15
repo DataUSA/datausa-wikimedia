@@ -9,7 +9,7 @@ if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
 function scrape(url) {
 
-  const fullUrl = `https://xenops.datausa.io/${url}`;
+  const fullUrl = `https://datausa.io/${url}`;
 
   let filename = url.replace(/\//g, "-");
   filename = filename.replace("?level=", "").replace("&key=", "-");
@@ -42,7 +42,7 @@ function scrape(url) {
         sources = build.sources;
 
         if (build.viz.font) {
-          build.viz.font("sans-serif").draw(() => {
+          build.viz.font("Noto Sans").draw(() => {
             setTimeout(() => {
               build.viz.draw();
               setTimeout(finishScrape, 1000);
@@ -76,7 +76,7 @@ function scrape(url) {
             .style("background-color", null);
         }
 
-        if (elem.attr("font-family")) elem.attr("font-family", "sans-serif");
+        if (elem.attr("font-family")) elem.attr("font-family", "Noto Sans, sans-serif");
         if (elem.attr("vector-effect")) elem.attr("vector-effect", null);
         if (elem.attr("opacity")) elem.attr("opacity", 1);
         if (elem.attr("fill-opacity")) elem.attr("fill-opacity", 1);
@@ -233,6 +233,9 @@ ${data.sources.map((d, i) => `${i ? "\n" : ""}*Data Source: [${d.link} ${d.org} 
 {{Data USA license}}
 `;
       fs.writeFileSync(`${dir}/${data.filename}.txt`, meta);
+    })
+    .catch(() => {
+      console.error("Failed:", fullUrl);
     });
 
 }
